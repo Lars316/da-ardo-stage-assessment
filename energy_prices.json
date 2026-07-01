@@ -1,0 +1,32 @@
+{
+  "Prices": [
+    { "price": 0.118, "readingDate": "2026-06-29T22:00:00Z" },
+    { "price": 0.109, "readingDate": "2026-06-29T23:00:00Z" },
+    { "price": 0.102, "readingDate": "2026-06-30T00:00:00Z" },
+    { "price": 0.098, "readingDate": "2026-06-30T01:00:00Z" },
+    { "price": 0.101, "readingDate": "2026-06-30T02:00:00Z" },
+    { "price": 0.112, "readingDate": "2026-06-30T03:00:00Z" },
+    { "price": 0.135, "readingDate": "2026-06-30T04:00:00Z" },
+    { "price": 0.168, "readingDate": "2026-06-30T05:00:00Z" },
+    { "price": 0.191, "readingDate": "2026-06-30T06:00:00Z" },
+    { "price": 0.162, "readingDate": "2026-06-30T07:00:00Z" },
+    { "price": 0.121, "readingDate": "2026-06-30T08:00:00Z" },
+    { "price": 0.089, "readingDate": "2026-06-30T09:00:00Z" },
+    { "price": 0.061, "readingDate": "2026-06-30T10:00:00Z" },
+    { "price": 0.048, "readingDate": "2026-06-30T11:00:00Z" },
+    { "price": 0.055, "readingDate": "2026-06-30T12:00:00Z" },
+    { "price": 0.079, "readingDate": "2026-06-30T13:00:00Z" },
+    { "price": 0.128, "readingDate": "2026-06-30T14:00:00Z" },
+    { "price": 0.184, "readingDate": "2026-06-30T15:00:00Z" },
+    { "price": 0.243, "readingDate": "2026-06-30T16:00:00Z" },
+    { "price": 0.271, "readingDate": "2026-06-30T17:00:00Z" },
+    { "price": 0.238, "readingDate": "2026-06-30T18:00:00Z" },
+    { "price": 0.192, "readingDate": "2026-06-30T19:00:00Z" },
+    { "price": 0.161, "readingDate": "2026-06-30T20:00:00Z" },
+    { "price": 0.134, "readingDate": "2026-06-30T21:00:00Z" }
+  ],
+  "intervalType": 4,
+  "average": 0.1375,
+  "fromDate": "2026-06-29T22:00:00Z",
+  "tillDate": "2026-06-30T21:59:59.999Z"
+}
