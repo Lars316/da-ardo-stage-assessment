@@ -29,11 +29,11 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h2 class="text-lg font-semibold">Uurprijzen</h2>
-                                @if(!empty($gegevens['fromDate']) || !empty($gegevens['tillDate']))
+                                @if(!empty($gegevens['range']['start']) || !empty($gegevens['range']['end']))
                                     <p class="text-sm text-gray-500">
-                                        {{ isset($gegevens['fromDate']) ? \Carbon\Carbon::parse($gegevens['fromDate'])->format('d-m-Y H:i') : '' }}
+                                        {{ isset($gegevens['range']['start']) ? \Carbon\Carbon::parse($gegevens['range']['start'])->format('d-m-Y H:i') : '' }}
                                         &nbsp;-&nbsp;
-                                        {{ isset($gegevens['tillDate']) ? \Carbon\Carbon::parse($gegevens['tillDate'])->format('d-m-Y H:i') : '' }}
+                                        {{ isset($gegevens['range']['end']) ? \Carbon\Carbon::parse($gegevens['range']['end'])->format('d-m-Y H:i') : '' }}
                                     </p>
                                 @endif
                             </div>
@@ -44,9 +44,9 @@
                         <ul class="space-y-2">
                             @foreach ($prijzen as $prijs)
                                 <li class="px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                                    <span class="font-medium">{{ isset($prijs['readingDate']) ? \Carbon\Carbon::parse($prijs['readingDate'])->format('d-m-Y H:i') : '' }}</span>
+                                    <span class="font-medium">{{ isset($prijs['start']) ? \Carbon\Carbon::parse($prijs['start'])->format('d-m-Y H:i') : '' }}</span>
                                     <span class="text-gray-600 dark:text-gray-400"> - </span>
-                                    <span>€ {{ isset($prijs['price']) ? number_format($prijs['price'], 3, ',', '.') : '' }}</span>
+                                    <span>€ {{ isset($prijs['price']['value']) ? number_format($prijs['price']['value'], 3, ',', '.') : '' }}</span>
                                 </li>
                             @endforeach
                         </ul>
