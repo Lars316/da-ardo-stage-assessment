@@ -26,7 +26,7 @@
             <div class="w-full max-w-4xl">
                 <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
                     <div class="px-6 py-4 border-b dark:border-gray-800">
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                             <div>
                                 <h2 class="text-lg font-semibold">Uurprijzen</h2>
                                 @if(!empty($gegevens['range']['start']) || !empty($gegevens['range']['end']))
@@ -37,6 +37,29 @@
                                     </p>
                                 @endif
                             </div>
+
+                            @if (!empty($gegevens['summary']))
+                                <div class="grid gap-3 sm:grid-cols-2">
+                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">Hoogste prijs</p>
+                                        <p class="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
+                                            € {{ number_format(data_get($gegevens, 'summary.highest.price.value', 0), 3, ',', '.') }}
+                                        </p>
+                                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                            {{ data_get($gegevens, 'summary.highest.start') ? \Carbon\Carbon::parse(data_get($gegevens, 'summary.highest.start'))->format('d-m-Y H:i') : '-' }}
+                                        </p>
+                                    </div>
+                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">Laagste prijs</p>
+                                        <p class="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
+                                            € {{ number_format(data_get($gegevens, 'summary.lowest.price.value', 0), 3, ',', '.') }}
+                                        </p>
+                                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                            {{ data_get($gegevens, 'summary.lowest.start') ? \Carbon\Carbon::parse(data_get($gegevens, 'summary.lowest.start'))->format('d-m-Y H:i') : '-' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -44,9 +67,10 @@
                         <ul class="space-y-2">
                             @foreach ($prijzen as $prijs)
                                 <li class="px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                                    <span class="font-medium">{{ isset($prijs['start']) ? \Carbon\Carbon::parse($prijs['start'])->format('d-m-Y H:i') : '' }}</span>
-                                    <span class="text-gray-600 dark:text-gray-400"> - </span>
-                                    <span>€ {{ isset($prijs['price']['value']) ? number_format($prijs['price']['value'], 3, ',', '.') : '' }}</span>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ isset($prijs['start']) ? \Carbon\Carbon::parse($prijs['start'])->format('d-m-Y H:i') : '' }}</span>
+                                        <span class="font-semibold text-slate-700 dark:text-slate-200">€ {{ isset($prijs['price']['value']) ? number_format($prijs['price']['value'], 3, ',', '.') : '' }}</span>
+                                    </div>
                                 </li>
                             @endforeach
                         </ul>

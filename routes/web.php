@@ -22,6 +22,15 @@ Route::get('/', function () {
                 'start' => $prijzen[0]['start'],
                 'end' => end($prijzen)['start'],
             ];
+
+            $prijzenCollect = collect($prijzen);
+            $highestValue = $prijzenCollect->max(fn ($item) => data_get($item, 'price.value', 0));
+            $lowestValue = $prijzenCollect->min(fn ($item) => data_get($item, 'price.value', 0));
+
+            $gegevens['summary'] = [
+                'highest' => $prijzenCollect->first(fn ($item) => data_get($item, 'price.value') === $highestValue),
+                'lowest' => $prijzenCollect->first(fn ($item) => data_get($item, 'price.value') === $lowestValue),
+            ];
         }
     } catch (\Exception $e) {
         $gegevens = [];
