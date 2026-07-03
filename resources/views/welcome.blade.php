@@ -65,8 +65,8 @@
 
                     <div class="px-6 pb-4 pt-4 border-b dark:border-gray-800">
                         <div class="flex gap-2 flex-wrap">
-                            <button id="listBtn" type="button" onclick="toggleView('list')" class="rounded-full border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Lijst</button>
-                            <button id="chartBtn" type="button" onclick="toggleView('chart')" class="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">Grafiek</button>
+                            <button id="listBtn" type="button" onclick="toggleView('list')" class="rounded-full border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-300 hover:border-slate-300">Lijst</button>
+                            <button id="chartBtn" type="button" onclick="toggleView('chart')" class="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-300 hover:border-slate-300">Grafiek</button>
                         </div>
                     </div>
 
@@ -81,7 +81,7 @@
                             @foreach ($prijzen as $prijs)
                                 <li class="px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                                     <div class="flex items-center justify-between gap-4">
-                                        <span class="font-medium text-slate-900 dark:text-white">{{ isset($prijs['start']) ? \Carbon\Carbon::parse($prijs['start'])->format('d-m-Y H:i') : '' }}</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ isset($prijs['start']) ? \Carbon\Carbon::parse($prijs['start'])->setTimezone('UTC')->format('d-m-Y H:i') : '' }}</span>
                                         <span class="font-semibold text-slate-700 dark:text-slate-200">€ {{ isset($prijs['price']['value']) ? number_format($prijs['price']['value'], 3, ',', '.') : '' }}</span>
                                     </div>
                                 </li>
@@ -129,7 +129,8 @@
                         return '';
                     }
                     const date = new Date(item.start);
-                    return `${String(date.getHours()).padStart(2, '0')}:00`;
+                    const hours = date.getUTCHours();
+                    return `${String(hours).padStart(2, '0')}:00`;
                 });
                 const minValue = Math.min(...values);
                 const maxValue = Math.max(...values);

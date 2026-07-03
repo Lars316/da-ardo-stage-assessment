@@ -15,7 +15,7 @@ Route::get('/', function () {
         $gegevens = $response->successful() ? $response->json() : [];
         $prijzen = collect($gegevens['base'] ?? [])->filter(function ($prijs) use ($requestedDate) {
             return isset($prijs['start']) && Carbon::parse($prijs['start'])->isSameDay($requestedDate);
-        })->values()->all();
+        })->sortBy(fn ($prijs) => data_get($prijs, 'start'))->values()->all();
 
         if (!empty($prijzen)) {
             $gegevens['range'] = [
