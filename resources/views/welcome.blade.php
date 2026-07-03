@@ -40,28 +40,21 @@
                         </div>
                     </div>
 
-                    <div class="p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-gray-700 dark:text-gray-300">Datum en tijd</th>
-                                    <th class="px-4 py-3 text-gray-700 dark:text-gray-300">Prijs (€)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                                @foreach ($prijzen as $prijs)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-900">
-                                        <td class="px-4 py-3">{{ isset($prijs['readingDate']) ? \Carbon\Carbon::parse($prijs['readingDate'])->format('d-m-Y H:i') : '' }}</td>
-                                        <td class="px-4 py-3">{{ isset($prijs['price']) ? number_format($prijs['price'], 3, ',', '.') : '' }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="p-4">
+                        <ul class="space-y-2">
+                            @foreach ($prijzen as $prijs)
+                                <li class="px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                    <span class="font-medium">{{ isset($prijs['readingDate']) ? \Carbon\Carbon::parse($prijs['readingDate'])->format('d-m-Y H:i') : '' }}</span>
+                                    <span class="text-gray-600 dark:text-gray-400"> - </span>
+                                    <span>€ {{ isset($prijs['price']) ? number_format($prijs['price'], 3, ',', '.') : '' }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
         @else
-            <p>Geen prijsdata gevonden.</p>
+            <p>Helaas is er op dit moment geen prijsdata beschikbaar.</p>
         @endif
 
 
