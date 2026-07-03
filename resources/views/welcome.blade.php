@@ -63,7 +63,20 @@
                         </div>
                     </div>
 
-                    <div class="p-4">
+                    <div class="px-6 pb-4 pt-4 border-b dark:border-gray-800">
+                        <div class="flex gap-2 flex-wrap">
+                            <button id="listBtn" type="button" onclick="toggleView('list')" class="rounded-full border border-slate-200 bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">Lijst</button>
+                            <button id="chartBtn" type="button" onclick="toggleView('chart')" class="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">Grafiek</button>
+                        </div>
+                    </div>
+
+                    <div id="chartView" class="p-4 hidden">
+                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                            <canvas id="priceChart" class="w-full h-96"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="listView" class="p-4">
                         <ul class="space-y-2">
                             @foreach ($prijzen as $prijs)
                                 <li class="px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition">
@@ -81,6 +94,134 @@
             <p>Helaas is er op dit moment geen prijsdata beschikbaar.</p>
         @endif
 
+        <script>
+            const prijsData = @json($prijzen);
+
+            function formatPrice(value) {
+                return new Intl.NumberFormat('nl-NL', {
+                    minimumFractionDigits: 3,
+                    maximumFractionDigits: 3,
+                }).format(value);
+            }
+
+            function drawChart() {
+                const canvas = document.getElementById('priceChart');
+                if (!canvas || !prijsData.length) {
+                    return;
+                }
+
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.clearRect(0, 0, rect.width, rect.height);
+
+                const padding = { left: 48, right: 24, top: 32, bottom: 50 };
+                const width = rect.width;
+                const height = rect.height;
+                const chartWidth = width - padding.left - padding.right;
+                const chartHeight = height - padding.top - padding.bottom;
+                const values = prijsData.map((item) => Number(item?.price?.value ?? 0));
+                const labels = prijsData.map((item) => {
+                    if (!item?.start) {
+                        return '';
+                    }
+                    const date = new Date(item.start);
+                    return `${String(date.getHours()).padStart(2, '0')}:00`;
+                });
+                const minValue = Math.min(...values);
+                const maxValue = Math.max(...values);
+                const range = Math.max(maxValue - minValue, 0.01);
+                const columnWidth = chartWidth / values.length;
+                const barWidth = Math.max(columnWidth * 0.6, 6);
+
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '600 14px ui-sans-serif, system-ui, sans-serif';
+                ctx.fillText('Staafgrafiek uurprijzen', padding.left, padding.top - 8);
+
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, padding.top);
+                ctx.lineTo(padding.left, padding.top + chartHeight);
+                ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
+                ctx.stroke();
+
+                ctx.font = '11px ui-sans-serif, system-ui, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#475569';
+                for (let i = 0; i <= 4; i += 1) {
+                    const y = padding.top + chartHeight - (chartHeight / 4) * i;
+                    const value = minValue + (range / 4) * i;
+                    ctx.fillText(formatPrice(value), padding.left - 10, y + 4);
+                    ctx.strokeStyle = '#e2e8f0';
+                    ctx.beginPath();
+                    ctx.moveTo(padding.left, y);
+                    ctx.lineTo(padding.left + chartWidth, y);
+                    ctx.stroke();
+                }
+
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#334155';
+                labels.forEach((label, index) => {
+                    if (index % 2 === 0 || values.length <= 12) {
+                        const x = padding.left + columnWidth * index + columnWidth / 2;
+                        ctx.fillText(label, x, padding.top + chartHeight + 18);
+                    }
+                });
+
+                values.forEach((value, index) => {
+                    const normalized = (value - minValue) / range;
+                    const barHeight = normalized * chartHeight;
+                    const x = padding.left + columnWidth * index + (columnWidth - barWidth) / 2;
+                    const y = padding.top + chartHeight - barHeight;
+                    const isHighest = value === maxValue;
+                    const isLowest = value === minValue;
+                    ctx.fillStyle = isHighest ? '#dc2626' : isLowest ? '#16a34a' : '#2563eb';
+                    ctx.fillRect(x, y, barWidth, barHeight);
+                    if (barWidth >= 28) {
+                        ctx.fillStyle = '#0f172a';
+                        ctx.fillText(formatPrice(value), x + barWidth / 2, y - 6);
+                    }
+                });
+            }
+
+            function toggleView(mode) {
+                const listView = document.getElementById('listView');
+                const chartView = document.getElementById('chartView');
+                const listBtn = document.getElementById('listBtn');
+                const chartBtn = document.getElementById('chartBtn');
+                if (!listView || !chartView || !listBtn || !chartBtn) {
+                    return;
+                }
+
+                const activeClasses = ['bg-slate-900', 'text-white'];
+                const inactiveClasses = ['bg-slate-100', 'text-slate-700'];
+
+                if (mode === 'chart') {
+                    listView.classList.add('hidden');
+                    chartView.classList.remove('hidden');
+                    listBtn.classList.remove(...activeClasses);
+                    listBtn.classList.add(...inactiveClasses);
+                    chartBtn.classList.add(...activeClasses);
+                    chartBtn.classList.remove(...inactiveClasses);
+                    requestAnimationFrame(drawChart);
+                } else {
+                    listView.classList.remove('hidden');
+                    chartView.classList.add('hidden');
+                    listBtn.classList.add(...activeClasses);
+                    listBtn.classList.remove(...inactiveClasses);
+                    chartBtn.classList.remove(...activeClasses);
+                    chartBtn.classList.add(...inactiveClasses);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                toggleView('list');
+            });
+        </script>
 
     </body>
 
